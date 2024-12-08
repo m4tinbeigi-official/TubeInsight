@@ -17,7 +17,7 @@ async function fetchChannels() {
 // تابع برای گرفتن اطلاعات کانال
 async function getChannelInfo(handle) {
   try {
-    const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&forUsername=${handle}&key=${API_KEY}`;
+	const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${API_KEY}`;
     const response = await fetch(detailsUrl);
 
     if (!response.ok) throw new Error(`Error: ${response.status}`);
