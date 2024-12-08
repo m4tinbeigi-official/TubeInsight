@@ -1,0 +1,39 @@
+@font-face {
+  font-family: 'Vazir';
+  src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir-Regular.woff2') format('woff2');
+}
+
+body {
+  font-family: 'Vazir', sans-serif;
+  background-color: #f8f9fa;
+}
+
+.channel-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.channel-card img {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.channel-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.channel-stats {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.loading-spinner {
+  display: none;
+}
