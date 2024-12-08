@@ -1,39 +1,99 @@
+/* اصلاح برای بارگذاری فونت وزیر از یک CDN معتبر */
 @font-face {
   font-family: 'Vazir';
-  src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir-Regular.woff2') format('woff2');
+  src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css') format('woff2');
 }
 
 body {
   font-family: 'Vazir', sans-serif;
   background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
 }
 
+/* استایل کارت کانال */
 .channel-card {
   border: 1px solid #ddd;
   border-radius: 10px;
-  padding: 15px;
+  padding: 20px;
   margin-bottom: 20px;
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.channel-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* استایل تصویر پروفایل */
 .channel-card img {
   border-radius: 50%;
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   object-fit: cover;
+  margin-bottom: 15px;
+  border: 2px solid #ddd;
 }
 
+/* عنوان کانال */
 .channel-title {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* استایل برای نمایش آمار کانال */
+.channel-stats {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+.channel-stats strong {
   font-weight: bold;
 }
 
-.channel-stats {
-  font-size: 0.9rem;
-  color: #555;
-}
-
+/* استایل لودینگ اسپینر */
 .loading-spinner {
   display: none;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* استایل برای دکمه بازدید کانال */
+.channel-card .btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.channel-card .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* استایل کلی برای صفحه */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.col-md-4 {
+  flex: 1 1 30%;
+  max-width: 30%;
+  box-sizing: border-box;
 }
