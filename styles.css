@@ -1,8 +1,10 @@
 /* اصلاح برای بارگذاری فونت وزیر از یک CDN معتبر */
+
 @font-face {
   font-family: 'Vazir';
   src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css') format('woff2');
 }
+
 
 body {
   font-family: 'Vazir', sans-serif;
