@@ -17,27 +17,24 @@ async function fetchChannels() {
 // تابع برای گرفتن اطلاعات کانال
 async function getChannelInfo(handle) {
   try {
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${handle}&key=${API_KEY}`;
-    const searchResponse = await fetch(searchUrl);
-    const searchData = await searchResponse.json();
+    // از "search" برای "handles" استفاده نکنید. باید از channel ID استفاده شود.
+    const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&forUsername=${handle}&key=${API_KEY}`;
+    const response = await fetch(detailsUrl);
 
-    if (searchData.items && searchData.items.length > 0) {
-      const channelId = searchData.items[0].id.channelId;
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    const data = await response.json();
 
-      const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&id=${channelId}&key=${API_KEY}`;
-      const detailsResponse = await fetch(detailsUrl);
-      const detailsData = await detailsResponse.json();
-
-      if (detailsData.items && detailsData.items.length > 0) {
-        return detailsData.items[0];
-      }
+    if (data.items && data.items.length > 0) {
+      return data.items[0];
     }
+    console.error(`Channel not found for handle: ${handle}`);
     return null;
   } catch (error) {
     console.error(`Error fetching channel info for ${handle}:`, error);
     return null;
   }
 }
+
 
 // تابع برای ساخت کارت کانال
 function createChannelCard(channel) {
