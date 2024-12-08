@@ -17,7 +17,6 @@ async function fetchChannels() {
 // تابع برای گرفتن اطلاعات کانال
 async function getChannelInfo(handle) {
   try {
-    // از "search" برای "handles" استفاده نکنید. باید از channel ID استفاده شود.
     const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&forUsername=${handle}&key=${API_KEY}`;
     const response = await fetch(detailsUrl);
 
@@ -34,7 +33,6 @@ async function getChannelInfo(handle) {
     return null;
   }
 }
-
 
 // تابع برای ساخت کارت کانال
 function createChannelCard(channel) {
