@@ -4,59 +4,95 @@ const loadingSpinner = document.querySelector('.loading-spinner');
 
 // تابع برای خواندن داده‌ها از فایل JSON
 async function fetchChannels() {
-  const response = await fetch('channels.json');
-  return response.json();
+  try {
+    const response = await fetch('channels.json');
+    if (!response.ok) throw new Error("Failed to fetch channels.json");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching channels:", error);
+    return [];
+  }
 }
 
 // تابع برای گرفتن اطلاعات کانال
 async function getChannelInfo(handle) {
-  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${handle}&key=${API_KEY}`;
-  const searchResponse = await fetch(searchUrl);
-  const searchData = await searchResponse.json();
+  try {
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${handle}&key=${API_KEY}`;
+    const searchResponse = await fetch(searchUrl);
+    const searchData = await searchResponse.json();
 
-  if (searchData.items && searchData.items.length > 0) {
-    const channelId = searchData.items[0].id.channelId;
+    if (searchData.items && searchData.items.length > 0) {
+      const channelId = searchData.items[0].id.channelId;
 
-    const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${API_KEY}`;
-    const detailsResponse = await fetch(detailsUrl);
-    const detailsData = await detailsResponse.json();
+      const detailsUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&id=${channelId}&key=${API_KEY}`;
+      const detailsResponse = await fetch(detailsUrl);
+      const detailsData = await detailsResponse.json();
 
-    if (detailsData.items && detailsData.items.length > 0) {
-      return detailsData.items[0];
+      if (detailsData.items && detailsData.items.length > 0) {
+        return detailsData.items[0];
+      }
     }
+    return null;
+  } catch (error) {
+    console.error(`Error fetching channel info for ${handle}:`, error);
+    return null;
   }
-  return null;
+}
+
+// تابع برای ساخت کارت کانال
+function createChannelCard(channel) {
+  const { title, description, thumbnails, publishedAt, country } = channel.snippet;
+  const { subscriberCount, viewCount, videoCount } = channel.statistics;
+  const topics = channel.topicDetails?.topicCategories || [];
+  
+  const creationYear = new Date(publishedAt).getFullYear();
+  const topicList = topics.map(topic => topic.split('/').pop().replace(/_/g, ' ')).join(', ') || 'Unknown';
+  const channelLink = `https://www.youtube.com/channel/${channel.id}`;
+
+  return `
+    <div class="col-md-4">
+      <div class="channel-card text-center p-3 border rounded">
+        <img src="${thumbnails.default.url}" alt="${title}" class="rounded-circle">
+        <div class="channel-title mt-3 font-weight-bold">${title}</div>
+        <div class="channel-description small mt-2 text-muted">${description || 'No description available'}</div>
+        <div class="channel-stats mt-3">
+          <strong>Subscribers:</strong> ${subscriberCount.toLocaleString()}<br>
+          <strong>Views:</strong> ${viewCount.toLocaleString()}<br>
+          <strong>Videos:</strong> ${videoCount.toLocaleString()}<br>
+          <strong>Created:</strong> ${creationYear}<br>
+          <strong>Country:</strong> ${country || 'Unknown'}<br>
+          <strong>Topics:</strong> ${topicList}
+        </div>
+        <a href="${channelLink}" target="_blank" class="btn btn-primary mt-3">Visit Channel</a>
+      </div>
+    </div>
+  `;
 }
 
 // تابع برای نمایش اطلاعات کانال‌ها
 async function displayChannels() {
-  loadingSpinner.style.display = 'block';
+  try {
+    loadingSpinner.style.display = 'block';
+    const channelHandles = await fetchChannels();
 
-  const channelHandles = await fetchChannels();
-  for (const handle of channelHandles) {
-    const channel = await getChannelInfo(handle);
-    if (channel) {
-      const { title, thumbnails } = channel.snippet;
-      const { subscriberCount, viewCount, videoCount } = channel.statistics;
-
-      const channelCard = `
-        <div class="col-md-4">
-          <div class="channel-card text-center">
-            <img src="${thumbnails.default.url}" alt="${title}">
-            <div class="channel-title mt-3">${title}</div>
-            <div class="channel-stats mt-2">
-              Subscribers: ${subscriberCount.toLocaleString()}<br>
-              Views: ${viewCount.toLocaleString()}<br>
-              Videos: ${videoCount.toLocaleString()}
-            </div>
-          </div>
-        </div>
-      `;
-      channelsContainer.innerHTML += channelCard;
+    if (channelHandles.length === 0) {
+      channelsContainer.innerHTML = '<p class="text-center text-danger">No channels found.</p>';
+      return;
     }
-  }
 
-  loadingSpinner.style.display = 'none';
+    for (const handle of channelHandles) {
+      const channel = await getChannelInfo(handle);
+      if (channel) {
+        channelsContainer.innerHTML += createChannelCard(channel);
+      }
+    }
+  } catch (error) {
+    console.error("Error displaying channels:", error);
+    channelsContainer.innerHTML = '<p class="text-center text-danger">Failed to load channels.</p>';
+  } finally {
+    loadingSpinner.style.display = 'none';
+  }
 }
 
+// شروع فرآیند
 displayChannels();
